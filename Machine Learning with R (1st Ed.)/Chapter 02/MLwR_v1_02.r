@@ -33,6 +33,12 @@ blood <- factor(c("O", "AB", "A"),
                 levels = c("A", "B", "AB", "O"))
 blood
 
+# add symptoms factor
+symptoms <- factor(c("SEVERE", 'MILD', "MODERATE"),
+                     levels = c("MILD", "MODERATE", "SEVERE"),
+                     ordered = TRUE)
+symptoms
+symptoms > "MODERATE"
 ## Lists -----
 
 # display information for a patient
@@ -41,13 +47,14 @@ temperature[1]
 flu_status[1]
 gender[1]
 blood[1]
-
+symptoms[1]
 # create list for a patient
 subject1 <- list(fullname = subject_name[1], 
                  temperature = temperature[1],
                  flu_status = flu_status[1],
                  gender = gender[1],
-                 blood = blood[1])
+                 blood = blood[1],
+                 symptoms = symptoms[1])
 
 # display the patient
 subject1
@@ -56,12 +63,12 @@ subject1
 
 # get a single list value by position
 subject1[2]
+subject1[[2]]
 # get a single list value by name
 subject1$temperature
 
 # get several list items by specifying a vector of names
 subject1[c("temperature", "flu_status")]
-
 ## access a list like a vector
 # get values 4 and 5
 subject1[4:5]
@@ -82,6 +89,7 @@ pt_data
 pt_data$subject_name
 
 # get several columns by specifying a vector of names
+pt_data[c("temperature", "flu_status")]
 pt_data[c("temperature", "flu_status")]
 
 # this is the same as above, extracting temperature and flu_status
@@ -105,7 +113,8 @@ pt_data[ , ]
 # the following are equivalent to the above
 pt_data[c(1, 3), c("temperature", "gender")]
 pt_data[-2, c(-1, -3, -5)]
-
+pt_data$temp_c <- (pt_data$temperature - 32) * (5/9)
+pt_data[c("temperature", "temp_c")]
 ## Matrixes -----
 
 # create a 2x2 matrix
@@ -217,6 +226,16 @@ plot(x = usedcars$mileage, y = usedcars$price,
      xlab = "Used Car Odometer (mi.)",
      ylab = "Used Car Price ($)")
 
+library(tidyverse)
+
+ggplot(data = usedcars,
+       aes(x = mileage, y = price)) +
+  geom_point() +
+  labs(x = "Used Car Odometer (mi.)",
+       y = "Used Car Price ($)",
+       title = "Scatterplot of Price vs. Mileage") +
+  geom_smooth(se = FALSE)
+
 # new variable indicating conservative colors
 usedcars$conservative <-
   usedcars$color %in% c("Black", "Gray", "Silver", "White")
@@ -225,4 +244,5 @@ usedcars$conservative <-
 table(usedcars$conservative)
 
 # Crosstab of conservative by model
-CrossTable(x = usedcars$model, y = usedcars$conservative)
+CrossTable(x = usedcars$model, y = usedcars$conservative,
+           chisq = TRUE)

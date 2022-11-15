@@ -36,7 +36,7 @@ normalize(c(10, 20, 30, 40, 50))
 
 # normalize the wbcd data
 wbcd_n <- as.data.frame(lapply(wbcd[2:31], normalize))
-
+wbcd_n <- as_tibble(map(wbcd[2:31], normalize))
 # confirm that normalization worked
 summary(wbcd_n$area_mean)
 
@@ -61,11 +61,14 @@ wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
 
 # load the "gmodels" library
 library(gmodels)
+library(cvms)
 
 # Create the cross tabulation of predicted vs. actual
 CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
            prop.chisq = FALSE)
-
+conf_mat <- confusion_matrix(targets = wbcd_test_labels,
+                 predictions = wbcd_test_pred)
+plot_confusion_matrix(conf_mat$`Confusion Matrix`[[1]])
 ## Step 5: Improving model performance ----
 
 # use the scale() function to z-score standardize a data frame
@@ -85,6 +88,9 @@ wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
 # Create the cross tabulation of predicted vs. actual
 CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
            prop.chisq = FALSE)
+conf_mat <- confusion_matrix(targets = wbcd_test_labels,
+                             predictions = wbcd_test_pred)
+plot_confusion_matrix(conf_mat$`Confusion Matrix`[[1]])
 
 # try several different values of k
 wbcd_train <- wbcd_n[1:469, ]
